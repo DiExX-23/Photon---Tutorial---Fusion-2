@@ -11,6 +11,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new();
 
     private NetworkRunner _runner;
+    private bool _mouseButton0;
 
     private void OnGUI()
     {
@@ -36,6 +37,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
+    }
+
+    private void Update()
+    {
+        _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0);
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -72,6 +78,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
         if (Input.GetKey(KeyCode.D))
             data.direction += Vector3.right;
+
+        data.buttons.Set(NetworkInputData.MOUSEBUTTON0, _mouseButton0);
+        _mouseButton0 = false;
 
         input.Set(data);
     }
